@@ -1,17 +1,50 @@
 import UIKit
+import DifferenceKit
 
 final class HomeViewController: UITableViewController {
-    struct Component {
+    
+    struct Component: Differentiable {
+        
         var title: String
         var subtitle: String
-        var initViewController: () -> UIViewController
+        
+        var differenceIdentifier: String {
+            return title
+        }
+        func isContentEqual(to source: HomeViewController.Component) -> Bool {
+            return self.subtitle == source.subtitle
+        }
     }
 
-    private let components = [
-        Component(title: "Shuffle Emojis", subtitle: "Shuffle sectioned Emojis in UICollectionView", initViewController: EmojiViewController.init),
-        Component(title: "Header Footer Section", subtitle: "Update header/footer by reload section in UITableView", initViewController: HeaderFooterViewController.init),
-        Component(title: "Random", subtitle: "Random diff in UICollectionView", initViewController: RandomViewController.init)
+    private var components = [
+        Component(title: "Shuffle Emojis", subtitle: "Shuffle sectioned Emojis in UICollectionView"),
+        Component(title: "Header Footer Section", subtitle: "Update header/footer by reload section in UITableView"),
+        Component(title: "Random", subtitle: "Random diff in UICollectionView")
     ]
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+            
+            let components = [
+                
+                Component(title: "Header Footer Section", subtitle: "XXX Update header/footer by reload section in UITableView"),
+                
+                Component(title: "Random", subtitle: "Random diff in UICollectionView"),
+                
+                Component(title: "Shuffle Emojis", subtitle: "Shuffle sectioned Emojis in UICollectionView"),
+            ]
+
+            let changeset = StagedChangeset(source: self.components, target: components)
+            
+            self.tableView.reload(using: changeset, with: .fade) { data in
+                self.components = components
+            }
+            
+        }
+        
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,8 +72,4 @@ extension HomeViewController {
         return cell
     }
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let viewController = components[indexPath.row].initViewController()
-        navigationController?.pushViewController(viewController, animated: true)
-    }
 }
