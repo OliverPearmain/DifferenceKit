@@ -16,7 +16,7 @@ final class HomeViewController: UITableViewController {
         }
     }
 
-    private var components = [
+    private var data = [
         Component(title: "Shuffle Emojis", subtitle: "Shuffle sectioned Emojis in UICollectionView"),
         Component(title: "Header Footer Section", subtitle: "Update header/footer by reload section in UITableView"),
         Component(title: "Random", subtitle: "Random diff in UICollectionView")
@@ -27,7 +27,7 @@ final class HomeViewController: UITableViewController {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             
-            let components = [
+            let data = [
                 
                 Component(title: "Header Footer Section", subtitle: "XXX Update header/footer by reload section in UITableView"),
                 
@@ -36,10 +36,10 @@ final class HomeViewController: UITableViewController {
                 Component(title: "Shuffle Emojis", subtitle: "Shuffle sectioned Emojis in UICollectionView"),
             ]
 
-            let changeset = StagedChangeset(source: self.components, target: components)
+            let changeset = StagedChangeset(source: self.data, target: data)
             
             self.tableView.reload(using: changeset, with: .fade) { data in
-                self.components = components
+                self.data = data
             }
             
         }
@@ -61,12 +61,12 @@ extension HomeViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return components.count
+        return data.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: HomeCell = tableView.dequeueReusableCell(for: indexPath)
-        let component = components[indexPath.row]
+        let component = data[indexPath.row]
         cell.titleLabel.text = component.title
         cell.subtitleLabel.text = component.subtitle
         return cell
